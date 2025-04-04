@@ -1,6 +1,7 @@
 package org.cat.fish.vesselsservice.exception;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.cat.fish.vesselsservice.exception.payload.ExceptionMessage;
 import org.cat.fish.vesselsservice.exception.wrapper.VesselNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.Objects;
 
 @ControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class ApiExceptionHandler {
 
     @ExceptionHandler(value = {
@@ -26,13 +28,15 @@ public class ApiExceptionHandler {
     })
 
     public <T extends BindException>ResponseEntity<ExceptionMessage> handleValidationException(final T e) {
+        log.info("**ApiExceptionHandler controller, handle validation exception*\n");
         final var badRequest = HttpStatus.BAD_REQUEST;
 
         return new ResponseEntity<>(
                 ExceptionMessage.builder()
                         .message("*" + Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage() + "!**")
                         .httpStatus(badRequest)
-                        .timestamp(ZonedDateTime.now(ZoneId.systemDefault()))
+                        .timestamp(ZonedDateTime
+                                .now(ZoneId.systemDefault()))
                         .build(), badRequest);
 
     }
@@ -41,6 +45,7 @@ public class ApiExceptionHandler {
             VesselNotFoundException.class
     })
     public <T extends RuntimeException> ResponseEntity<ExceptionMessage> handleApiRequestException(final T e) {
+        log.info("**ApiExceptionHandler controller, handle API request*\n");
         final var badRequest = HttpStatus.BAD_REQUEST;
 
         return new ResponseEntity<>(

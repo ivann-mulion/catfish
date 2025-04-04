@@ -1,12 +1,12 @@
 package org.cat.fish.vesselsservice.helper;
 
-import org.cat.fish.vesselsservice.model.dto.VesselsDto;
+import org.cat.fish.vesselsservice.model.dto.request.VesselsDto;
 import org.cat.fish.vesselsservice.model.entity.Vessel;
 
 public interface VesselMappingHelper {
     static VesselsDto map(final Vessel vessel) {
         return VesselsDto.builder()
-                .id(vessel.getId())
+                .vesselId(vessel.getVesselId())
                 .vesselName(vessel.getVesselName())
                 .imageUrl(vessel.getImageUrl())
                 .description(vessel.getDescription())
@@ -22,7 +22,7 @@ public interface VesselMappingHelper {
 
     static Vessel map(final VesselsDto vesselsDto) {
         return Vessel.builder()
-                .id(vesselsDto.getId())
+                .vesselId(vesselsDto.getVesselId())
                 .vesselName(vesselsDto.getVesselName())
                 .imageUrl(vesselsDto.getImageUrl())
                 .description(vesselsDto.getDescription())
