@@ -30,7 +30,7 @@
         <module>search-service</module>
         <module>route-service</module>
         <module>calendar-service</module>
-        <module>vassels-service</module>
+        <module>vessels-service</module>
     </modules>
 
     <properties>

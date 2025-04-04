@@ -20,21 +20,14 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.net.URI;
 
+import static org.cat.fish.mediaservice.constant.CloudStorageConstant.*;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
-@RequestMapping("/photos")
+@RequestMapping("api/media")
 @Tag(name = "Photos")
 @ApiResponses(@ApiResponse(responseCode = "200", useReturnTypeSchema = true))
 public class PhotoController {
-
-
-    private static final String KEY_ID = "YCAJEhqMZjfLGHPmILb2_FLHL";
-    private static final String SECRET_KEY = "YCMakQfJc3bM_zvuXIyKVOAmyr4EPxWflfY--cu4";
-    private static final String REGION = "ru-central1";
-    private static final String S3_ENDPOINT = "https://storage.yandexcloud.net";
-
-    private static final String BUCKET = "catfish-files";
 
     private final S3Client s3Client;
 
@@ -85,38 +78,5 @@ public class PhotoController {
                 .body(data);
     }
 
-    @PutMapping(consumes = MULTIPART_FORM_DATA_VALUE)
-    public String uploadVideo(@RequestParam MultipartFile photo) throws IOException {
 
-        String key = "videos/" + photo.getOriginalFilename();
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(BUCKET)
-                .key(key)
-                .contentType(photo.getContentType())
-                .build();
-
-        s3Client.putObject(putObjectRequest, RequestBody.fromBytes(photo.getBytes()));
-
-        return key;
-    }
-
-    @GetMapping
-    public ResponseEntity<byte[]> downloadVideo(@RequestParam String key) throws IOException {
-
-        GetObjectRequest objectRequest = GetObjectRequest.builder()
-                .bucket(BUCKET)
-                .key(key)
-                .build();
-
-        var inputStream = s3Client.getObject(objectRequest);
-        byte[] data = inputStream.readAllBytes();
-
-        var headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline");
-        headers.add(HttpHeaders.CONTENT_TYPE, inputStream.response().contentType());
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(data);
-    }
 }

@@ -1,0 +1,64 @@
+package org.cat.fish.vesselsservice.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.cat.fish.vesselsservice.exception.wrapper.VesselNotFoundException;
+import org.cat.fish.vesselsservice.helper.VesselMappingHelper;
+import org.cat.fish.vesselsservice.model.dto.VesselsDto;
+import org.cat.fish.vesselsservice.model.entity.Vessel;
+import org.cat.fish.vesselsservice.repository.VesselRepository;
+import org.cat.fish.vesselsservice.service.VesselsService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Transactional
+@RequiredArgsConstructor
+@Service
+public class VesselsServiceImpl implements VesselsService {
+
+    @Autowired
+    private VesselRepository vesselRepository;
+
+    @Override
+    public VesselsDto findById(Long id) {
+        return vesselRepository.findById(id)
+                .map(VesselMappingHelper::map)
+                .orElseThrow(() -> new VesselNotFoundException(String.format("Vessel with id %s not found", id)));
+    }
+
+    @Override
+    public VesselsDto save(VesselsDto vesselsDto) {
+        try{
+            return VesselMappingHelper.map(vesselRepository.save(VesselMappingHelper.map(vesselsDto)));
+        } catch (DataIntegrityViolationException e) {
+            throw new VesselNotFoundException("Error saving vessel: Data integrity violation", e);
+        } catch (Exception e) {
+            throw new VesselNotFoundException("Error saving vessel: ", e);
+        }
+
+    }
+
+    @Override
+    public VesselsDto update(VesselsDto vesselsDto) {
+        Vessel existingVessel = vesselRepository.findById(vesselsDto.getId())
+                .orElseThrow(() -> new VesselNotFoundException("Vessel not found with id: " + vesselsDto.getId()));
+
+        BeanUtils.copyProperties(vesselsDto, existingVessel, "vesselId", "vesselDto");
+
+        Vessel updatedVessel = vesselRepository.save(existingVessel);
+
+        return VesselMappingHelper.map(updatedVessel);
+    }
+
+//    @Override
+//    public VesselsDto update(Long id, VesselsDto vesselsDto) {
+//
+//    }
+
+    @Override
+    public void deleteById(Long id) {
+        this.vesselRepository.deleteById(id);
+    }
+}
