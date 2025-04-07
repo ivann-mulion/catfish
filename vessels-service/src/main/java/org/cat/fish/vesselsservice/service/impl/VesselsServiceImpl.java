@@ -25,7 +25,7 @@ public class VesselsServiceImpl implements VesselsService {
 
     @Override
     public VesselsDto findById(Long id) {
-        log.info("VesselsDto, service; fetch product by id");
+        log.info("VesselsDto, service; fetch vessel by id");
         return vesselRepository.findById(id)
                 .map(VesselMappingHelper::map)
                 .orElseThrow(() -> new VesselNotFoundException(String.format("Vessel with id %s not found", id)));
@@ -33,7 +33,7 @@ public class VesselsServiceImpl implements VesselsService {
 
     @Override
     public VesselsDto save(VesselsDto vesselsDto) {
-        log.info("VesselsDto, service; save product");
+        log.info("VesselsDto, service; save vessel");
         try{
             return VesselMappingHelper.map(vesselRepository.save(VesselMappingHelper.map(vesselsDto)));
         } catch (DataIntegrityViolationException e) {
@@ -46,7 +46,7 @@ public class VesselsServiceImpl implements VesselsService {
 
     @Override
     public VesselsDto update(VesselsDto vesselsDto) {
-        log.info("VesselsDto, service; update product");
+        log.info("VesselsDto, service; update vessel");
         Vessel existingVessel = vesselRepository.findById(vesselsDto.getVesselId())
                 .orElseThrow(() -> new VesselNotFoundException("Vessel not found with id: " + vesselsDto.getVesselId()));
 
@@ -71,7 +71,7 @@ public class VesselsServiceImpl implements VesselsService {
 
     @Override
     public void deleteById(Long id) {
-        log.info("VesselsDto, service; update product with productId");
+        log.info("VesselsDto, service; delete vessel with vesselId");
         this.vesselRepository.deleteById(id);
     }
 }
