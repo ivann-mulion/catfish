@@ -2,6 +2,7 @@ package org.cat.fish.routeservice.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class RouteDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @NotNull(message = "Route ID cannot be null")
     private Long routeId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<RoutePhotosDto> routePhotos;

@@ -2,6 +2,7 @@ package org.cat.fish.routeservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.cat.fish.routeservice.client.MediaServiceClient;
 import org.cat.fish.routeservice.exception.wrapper.RouteNotFoundException;
 import org.cat.fish.routeservice.exception.wrapper.RoutePhotoNotFoundException;
 import org.cat.fish.routeservice.helper.RoutePhotosMappingHelper;
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,21 +34,18 @@ public class RoutePhotosServiceImpl implements RoutePhotoService {
     @Autowired
     private RoutePhotosRepository routePhotosRepository;
 
+    @Autowired
+    private MediaServiceClient mediaServiceClient;
+
     @Override
     public RoutePhotosDto findById(Long id) {
-        log.info("RoutePhotosService: fetch photo by id {}", id);
-        return routePhotosRepository.findById(id)
-                .map(RoutePhotosMappingHelper::mapToDto)
-                .orElseThrow(() -> new RoutePhotoNotFoundException("Photo not found with id " + id));
+        RoutePhotos photo = routePhotosRepository.findById(id)
+                .orElseThrow(() -> new RoutePhotoNotFoundException("Photo not found"));
+        return RoutePhotosMappingHelper.mapToDto(photo);
     }
 
     @Override
     public List<RoutePhotosDto> findAllPhotoByRouteId(Long routeId) {
-        log.info("RoutePhotosService: fetch photos by route id {}", routeId);
-        if (!routeRepository.existsById(routeId)) {
-            throw new RoutePhotoNotFoundException("Photo not found with id " + routeId);
-        }
-
         return routePhotosRepository.findByRouteRouteId(routeId).stream()
                 .map(RoutePhotosMappingHelper::mapToDto)
                 .collect(Collectors.toList());
@@ -129,5 +129,54 @@ public class RoutePhotosServiceImpl implements RoutePhotoService {
         }
 
         routePhotosRepository.deleteByRouteRouteId(routeId);
+    }
+
+    @Override
+    public byte[] getPhotoContent(Long photoId) {
+        log.info("Getting photo content for ID: {}", photoId);
+
+        RoutePhotos photo = routePhotosRepository.findById(photoId)
+                .orElseThrow(() -> new RoutePhotoNotFoundException("Photo not found with id: " + photoId));
+
+        try {
+            byte[] content = mediaServiceClient.downloadPhoto(photo.getPhotoLink());
+            log.info("Successfully downloaded photo content for ID: {}", photoId);
+            return content;
+
+        } catch (Exception e) {
+            log.error("Failed to download photo content for ID {}: {}", photoId, e.getMessage());
+            throw new RuntimeException("Failed to download photo: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public RoutePhotosDto createPhotoForRoute(Long routeId, MultipartFile photoFile) {
+        log.info("Creating photo for route ID: {}", routeId);
+
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: " + routeId));
+
+        try {
+            String photoKey = mediaServiceClient.uploadPhoto(photoFile);
+            log.info("Photo uploaded successfully. Key: {}", photoKey);
+
+            RoutePhotos routePhoto = RoutePhotos.builder()
+                    .photoLink(photoKey) // Ключ из S3
+                    .route(route)
+                    .originalFileName(photoFile.getOriginalFilename())
+                    .fileSize(photoFile.getSize())
+                    .contentType(photoFile.getContentType())
+                    .uploadedAt(LocalDateTime.now())
+                    .build();
+
+            RoutePhotos savedPhoto = routePhotosRepository.save(routePhoto);
+            log.info("Photo saved to database with ID: {}", savedPhoto.getPhotoId());
+
+            return RoutePhotosMappingHelper.mapToDto(savedPhoto);
+
+        } catch (Exception e) {
+            log.error("Failed to create photo for route {}: {}", routeId, e.getMessage());
+            throw new RuntimeException("Failed to upload photo: " + e.getMessage(), e);
+        }
     }
 }

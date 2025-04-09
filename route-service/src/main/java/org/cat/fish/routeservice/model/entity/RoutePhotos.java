@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,10 +26,23 @@ public class RoutePhotos implements Serializable {
     @Column(name = "photo_id", unique = true, nullable = false, updatable = false)
     private Long photoId;
 
+    @Column(name = "photo_link")
+    private String photoLink;
+
+    @Column(name = "original_file_name")
+    private String originalFileName;
+
+    @Column(name = "file_size")
+    private Long fileSize;
+
+    @Column(name = "content_type")
+    private String contentType;
+
+    @Column(name = "uploaded_at")
+    private LocalDateTime uploadedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id")
     private Route route;
-
-    @Column(name = "photo_link")
-    private String photoLink;
 }
+

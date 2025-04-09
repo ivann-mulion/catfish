@@ -10,10 +10,8 @@ import org.cat.fish.routeservice.service.RouteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @Transactional
@@ -29,7 +27,7 @@ public class RouteServiceImpl implements RouteService {
         log.info("RouteDto, service; fetch product by id");
         return routeRepository.findById(id)
                 .map(RouteMappingHelper::mapToDto)
-                .orElseThrow();
+                .orElseThrow(() -> new RouteNotFoundException("Route not found"));
     }
 
     @Override
@@ -60,7 +58,18 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public RouteDto updateRoute(Long id, RouteDto routeDto) {
-        return null;
+        Route existingRoute = routeRepository.findById(id)
+                .orElseThrow(() -> new RouteNotFoundException(String.format("Route with id %s not found", id)));
+
+        if (routeDto.getName() != null) {
+            existingRoute.setName(routeDto.getName());
+        }
+        if (routeDto.getDescription() != null) {
+            existingRoute.setDescription(routeDto.getDescription());
+        }
+        Route updatedRoute = routeRepository.save(existingRoute);
+
+        return RouteMappingHelper.mapToDto(updatedRoute);
     }
 
     @Override

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("vessels")
+@RequestMapping("api/vessels")
 public class VesselsController {
 
     @Autowired
