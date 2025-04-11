@@ -9,5 +9,6 @@ public enum RoleName {
     USER,
     PROMOTER,
     ADMIN,
+    CAPTAIN,
     MANAGER
 }

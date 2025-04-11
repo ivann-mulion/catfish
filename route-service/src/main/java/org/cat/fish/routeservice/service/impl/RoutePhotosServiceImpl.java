@@ -161,7 +161,7 @@ public class RoutePhotosServiceImpl implements RoutePhotoService {
             log.info("Photo uploaded successfully. Key: {}", photoKey);
 
             RoutePhotos routePhoto = RoutePhotos.builder()
-                    .photoLink(photoKey) // Ключ из S3
+                    .photoLink(photoKey)
                     .route(route)
                     .originalFileName(photoFile.getOriginalFilename())
                     .fileSize(photoFile.getSize())

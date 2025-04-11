@@ -1,75 +1,38 @@
-package org.cat.fish.vesselsservice.model.entity;
+package org.cat.fish.capitanservice.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.cat.fish.vesselsservice.constant.AppConstant;
+import org.cat.fish.capitanservice.constant.AppConstant;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDate;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-@Entity
-@Table(name = "vessels")
-public class Vessel implements Serializable {
+public class VesselCreationRequest {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "vessel_id", unique = true, nullable = false, updatable = false)
     private Long vesselId;
-
-    @Column(name = "captain_id", nullable = false)
-    private Long captainId;
-
-    @Column(name = "boat_name")
     private String vesselName;
-
-    @Column(name = "image_url")
     private String imageUrl;
-
-    @Column(name = "description")
     private String description;
-
-    @Column(name = "capacity")
     private Integer capacity;
-
-    @Column(name = "engine_power")
     private Double enginePower;
-
-    @Column(name = "maintence_interval_hour")
     private Integer maintenceIntervalHour;
-
-    @Column(name = "boat_draft_m")
     private Double boatDraftM;
-
-    @Column(name = "waterline_height_m")
     private Double waterlineHeightM;
 
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(pattern = AppConstant.LOCAL_DATE_FORMAT, shape = JsonFormat.Shape.STRING)
     @DateTimeFormat(pattern = AppConstant.LOCAL_DATE_FORMAT)
-    @Column(name = "last_maintenance")
     private LocalDate lastMaintenance;
-
-    @Column(name = "for_sale")
     private Boolean forSale;
-
-    @Column(name = "min_pph")
     private Integer minPph;
 }
