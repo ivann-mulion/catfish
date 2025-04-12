@@ -23,6 +23,7 @@ public class VesselsDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long vesselId;
+    private Long captainId;
     private String vesselName;
     private String imageUrl;
     private String description;

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 public class VesselCreationRequest {
 
     private Long vesselId;
+    private Long capitanId;
     private String vesselName;
     private String imageUrl;
     private String description;

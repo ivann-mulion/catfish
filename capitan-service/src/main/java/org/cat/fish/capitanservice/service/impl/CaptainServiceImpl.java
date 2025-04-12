@@ -67,6 +67,7 @@ public class CaptainServiceImpl implements CaptainService {
         return webClientBuilder.baseUrl("http://localhost:8080").build()
                 .post()
                 .uri("api/vessels")
+                .bodyValue(vesselCreationRequest)
                 .retrieve()
                 .bodyToMono(VesselCreationRequest.class);
     }
