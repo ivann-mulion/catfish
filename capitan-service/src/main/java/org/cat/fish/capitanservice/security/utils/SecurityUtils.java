@@ -11,18 +11,36 @@ public class SecurityUtils {
     public static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.isAuthenticated()) {
-            Object principal = authentication.getPrincipal();
+        System.out.println("Authentication: " + authentication);
+        if (authentication != null) {
+            System.out.println("Principal: " + authentication.getPrincipal());
+            System.out.println("Authorities: " + authentication.getAuthorities());
+            System.out.println("Authenticated: " + authentication.isAuthenticated());
+        }
 
-            if (principal instanceof UserPrincipal) {
-                return ((UserPrincipal) principal).getId();
-            } else if (principal instanceof Long) {
-                return (Long) principal;
-            } else if (principal instanceof String) {
+        if (authentication == null) {
+            throw new IllegalStateException("Authentication not found in security context");
+        }
+
+        if (!authentication.isAuthenticated()) {
+            throw new IllegalStateException("User is not authenticated");
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UserPrincipal) {
+            System.out.println("Principal: " + ((UserPrincipal) principal).getId());
+            return ((UserPrincipal) principal).getId();
+        } else if (principal instanceof Long) {
+            return (Long) principal;
+        } else if (principal instanceof String) {
+            try {
                 return Long.parseLong((String) principal);
+            } catch (NumberFormatException e) {
+                throw new IllegalStateException("Invalid user ID format: " + principal);
             }
         }
 
-        throw new IllegalStateException("User not authenticated");
+        throw new IllegalStateException("Unexpected principal type: " + principal.getClass().getName());
     }
 }

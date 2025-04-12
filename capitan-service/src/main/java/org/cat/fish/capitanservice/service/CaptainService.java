@@ -9,7 +9,7 @@ public interface CaptainService {
     CaptainDetailsDto findById(Long id);
     CaptainDetailsDto update(final CaptainDetailsDto captainDetailsDto);
     CaptainDetailsDto update (final Long id, final CaptainDetailsDto captainDetailsDto);
-    Mono<VesselCreationRequest> createVessel(final VesselCreationRequest vesselCreationRequest);
+    VesselCreationRequest createVessel(final VesselCreationRequest vesselCreationRequest);
 
 
 }

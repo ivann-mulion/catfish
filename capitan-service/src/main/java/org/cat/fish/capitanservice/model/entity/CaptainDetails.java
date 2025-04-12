@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
+import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +15,7 @@ import java.io.Serial;
 @Builder
 @Entity
 @Table(name = "captain")
-public class CaptainDetails {
+public class CaptainDetails implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

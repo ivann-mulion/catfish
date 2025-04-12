@@ -8,7 +8,7 @@ import lombok.Getter;
 public class UserPrincipal {
     private final Long id;
 
-    public String getName() {
-        return id.toString();
+    public Long getId() {
+        return id;
     }
 }

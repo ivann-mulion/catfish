@@ -37,11 +37,11 @@ public class CaptainController {
         return ResponseEntity.ok(captainService.update(captainId));
     }
 
-    @PostMapping
-    public Mono<ResponseEntity<VesselCreationRequest>> createVessel(@RequestBody @Valid final VesselCreationRequest vesselCreationRequest) {
+    @PostMapping("/vessel")
+    public ResponseEntity<VesselCreationRequest> createVessel(@RequestBody @Valid final VesselCreationRequest vesselCreationRequest) {
         log.info("Captain, resource; create vessel");
-        return captainService.createVessel(vesselCreationRequest)
-                .map(ResponseEntity::ok);
+        VesselCreationRequest result = captainService.createVessel(vesselCreationRequest);
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{routeId}")

@@ -51,6 +51,11 @@ public class UserPrinciple implements UserDetails {
         return roles;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+
     @Override
     public String getPassword() {
         return password;

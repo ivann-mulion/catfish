@@ -7,6 +7,7 @@ public interface VesselMappingHelper {
     static VesselsDto map(final Vessel vessel) {
         return VesselsDto.builder()
                 .vesselId(vessel.getVesselId())
+                .captainId(vessel.getCaptainId())
                 .vesselName(vessel.getVesselName())
                 .imageUrl(vessel.getImageUrl())
                 .description(vessel.getDescription())
@@ -23,6 +24,7 @@ public interface VesselMappingHelper {
     static Vessel map(final VesselsDto vesselsDto) {
         return Vessel.builder()
                 .vesselId(vesselsDto.getVesselId())
+                .captainId(vesselsDto.getCaptainId())
                 .vesselName(vesselsDto.getVesselName())
                 .imageUrl(vesselsDto.getImageUrl())
                 .description(vesselsDto.getDescription())

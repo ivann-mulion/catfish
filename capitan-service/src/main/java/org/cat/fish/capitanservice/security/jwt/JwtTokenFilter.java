@@ -48,6 +48,7 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
             } else {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
             }
+
         } catch (ExpiredJwtException e) {
             logger.error("Token has expired for request: {}", request.getRequestURI());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
@@ -59,7 +60,7 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
     private String extractToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer")) {
-            return authHeader.replace("Bearer", "");
+            return authHeader.replace("Bearer ", "");
         }
         return null;
     }

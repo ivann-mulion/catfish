@@ -33,6 +33,8 @@ public class JwtProvider {
                 .parseSignedClaims(token)
                 .getPayload();
 
+
+
         Long userId = claims.get("userId", Long.class);
         List<GrantedAuthority> authorities = extractAuthorities(claims);
 
@@ -44,7 +46,6 @@ public class JwtProvider {
     private List<GrantedAuthority> extractAuthorities(Claims claims) {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        @SuppressWarnings("unchecked")
         List<String> roles = (List<String>) claims.get("authorities");
 
         if (roles != null) {
@@ -57,9 +58,11 @@ public class JwtProvider {
     }
 
     public Boolean validateToken(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+
         try {
             Jwts.parser()
-                    .verifyWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+                    .verifyWith(key)
                     .build()
                     .parseSignedClaims(token);
 

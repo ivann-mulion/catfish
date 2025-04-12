@@ -3,6 +3,7 @@ package org.cat.fish.capitanservice.model.dto.request;
 import lombok.*;
 
 import java.io.Serial;
+import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -10,7 +11,7 @@ import java.io.Serial;
 @Setter
 @Getter
 @Builder
-public class CaptainDetailsDto {
+public class CaptainDetailsDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
