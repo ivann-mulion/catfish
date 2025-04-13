@@ -9,9 +9,7 @@ import org.cat.fish.capitanservice.model.dto.request.CaptainDetailsDto;
 import org.cat.fish.capitanservice.model.dto.request.VesselCreationRequest;
 import org.cat.fish.capitanservice.service.CaptainService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
@@ -51,7 +49,5 @@ public class CaptainController {
         log.info("CaptainDetailsDto, resource; update captain with id: {}", captainId);
         return ResponseEntity.ok(captainService.update(Long.parseLong(captainId), captainDetailsDto));
     }
-
-
 
 }

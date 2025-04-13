@@ -25,7 +25,7 @@ public class VesselsServiceImpl implements VesselsService {
 
     @Override
     public VesselsDto findById(Long id) {
-        log.info("VesselsDto, service; fetch vessel by id");
+        log.info("VesselsDto, service; fetch vessel by id: {}", id);
         return vesselRepository.findById(id)
                 .map(VesselMappingHelper::map)
                 .orElseThrow(() -> new VesselNotFoundException(String.format("Vessel with id %s not found", id)));
