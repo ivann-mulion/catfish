@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @Slf4j
 @Transactional
@@ -21,6 +24,23 @@ public class RouteServiceImpl implements RouteService {
 
     @Autowired
     private RouteRepository routeRepository;
+
+    @Override
+    public Flux<List<RouteDto>> findAll() {
+        log.info("ProductDto List, service, fetch all products");
+        return Flux.defer(() -> {
+                    List<RouteDto> routeDto = routeRepository.findAll()
+                            .stream()
+                            .map(RouteMappingHelper::mapToDto)
+                            .distinct()
+                            .toList();
+                    return Flux.just(routeDto);
+                })
+                .onErrorResume(throwable -> {
+                    log.error("Error while fetching products: " + throwable.getMessage());
+                    return Flux.empty();
+                });
+    }
 
     @Override
     public RouteDto findById(Long id) {

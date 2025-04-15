@@ -9,6 +9,7 @@ import org.cat.fish.capitanservice.model.dto.request.CaptainDetailsDto;
 import org.cat.fish.capitanservice.model.dto.request.VesselCreationRequest;
 import org.cat.fish.capitanservice.service.CaptainService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -35,6 +36,7 @@ public class CaptainController {
         return ResponseEntity.ok(captainService.update(captainId));
     }
 
+    @PreAuthorize("CAPTAIN")
     @PostMapping("/vessel")
     public ResponseEntity<VesselCreationRequest> createVessel(@RequestBody @Valid final VesselCreationRequest vesselCreationRequest) {
         log.info("Captain, resource; create vessel");
