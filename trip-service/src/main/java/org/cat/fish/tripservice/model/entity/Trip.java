@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 @Builder
 @Entity
-@Table(name = "t_trip")
+@Table(name = "trip")
 public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

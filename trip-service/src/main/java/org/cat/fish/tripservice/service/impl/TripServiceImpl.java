@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @Slf4j
 @Transactional
@@ -22,6 +25,23 @@ public class TripServiceImpl implements TripService {
 
     @Autowired
     private TripRepository tripRepository;
+
+    @Override
+    public Flux<List<TripDto>> findAll() {
+        log.info("ProductDto List, service, fetch all trips");
+        return Flux.defer(() -> {
+                    List<TripDto> routeDto = tripRepository.findAll()
+                            .stream()
+                            .map(TripMappingHelper::mapToDto)
+                            .distinct()
+                            .toList();
+                    return Flux.just(routeDto);
+                })
+                .onErrorResume(throwable -> {
+                    log.error("Error while fetching trips: " + throwable.getMessage());
+                    return Flux.empty();
+                });
+    }
 
     @Override
     public TripDto findById(Long id) {

@@ -9,7 +9,6 @@ public interface TripMappingHelper {
         return TripDto.builder()
                 .tripId(trip.getTripId())
                 .vesselId(trip.getVesselId())
-                .userId(trip.getUserId())
                 .departureTime(trip.getDepartureTime())
                 .arrivalTime(trip.getArrivalTime())
                 .routeId(trip.getRouteId())

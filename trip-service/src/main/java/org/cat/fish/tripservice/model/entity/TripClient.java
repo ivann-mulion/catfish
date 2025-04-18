@@ -14,10 +14,10 @@ public class TripClient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, updatable = false)
-    private Long id;
+    private Long clientId;
 
     @Column(name = "first_name")
-    private Long firstName;
+    private String firstName;
 
     @Column(name = "last_name")
     private String lastName;

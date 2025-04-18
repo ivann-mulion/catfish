@@ -55,6 +55,14 @@ public class UserPrinciple implements UserDetails {
         return id;
     }
 
+    public String getFirstname(){
+        return firstname;
+    }
+
+    public String getLastname(){
+        return lastname;
+    }
+
 
     @Override
     public String getPassword() {

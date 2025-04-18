@@ -43,6 +43,8 @@ public class JwtProvider {
         return Jwts.builder()
                 .subject(userPrinciple.getUsername())
                 .claim("userId", userPrinciple.getId())
+                .claim("firstName", userPrinciple.getFirstname())
+                .claim("lastName", userPrinciple.getLastname())
                 .claim("authorities", authorities)
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() + jwtExpiration * 1000L))

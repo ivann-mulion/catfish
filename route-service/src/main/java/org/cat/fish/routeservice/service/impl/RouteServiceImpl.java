@@ -27,7 +27,7 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public Flux<List<RouteDto>> findAll() {
-        log.info("ProductDto List, service, fetch all products");
+        log.info("RouteDto List, service, fetch all routes");
         return Flux.defer(() -> {
                     List<RouteDto> routeDto = routeRepository.findAll()
                             .stream()
@@ -37,7 +37,7 @@ public class RouteServiceImpl implements RouteService {
                     return Flux.just(routeDto);
                 })
                 .onErrorResume(throwable -> {
-                    log.error("Error while fetching products: " + throwable.getMessage());
+                    log.error("Error while fetching routes: " + throwable.getMessage());
                     return Flux.empty();
                 });
     }

@@ -10,6 +10,9 @@ import org.cat.fish.vesselsservice.service.VesselsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -19,6 +22,12 @@ public class VesselsController {
 
     @Autowired
     private VesselsService vesselsService;
+
+    @GetMapping
+    public Flux<List<VesselsDto>> findAll() {
+        log.info("ProductDto List, controller; fetch all categories");
+        return vesselsService.findAll();
+    }
 
     @GetMapping("/{vesselId}")
     public ResponseEntity<VesselsDto> findById(@PathVariable("vesselId")

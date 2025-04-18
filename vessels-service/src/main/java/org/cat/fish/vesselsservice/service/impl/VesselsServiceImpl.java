@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @Slf4j
 @Transactional
@@ -22,6 +25,23 @@ public class VesselsServiceImpl implements VesselsService {
 
     @Autowired
     private VesselRepository vesselRepository;
+
+    @Override
+    public Flux<List<VesselsDto>> findAll() {
+        log.info("RouteDto List, service, fetch all routes");
+        return Flux.defer(() -> {
+                    List<VesselsDto> routeDto = vesselRepository.findAll()
+                            .stream()
+                            .map(VesselMappingHelper::map)
+                            .distinct()
+                            .toList();
+                    return Flux.just(routeDto);
+                })
+                .onErrorResume(throwable -> {
+                    log.error("Error while fetching routes: " + throwable.getMessage());
+                    return Flux.empty();
+                });
+    }
 
     @Override
     public VesselsDto findById(Long id) {

@@ -19,7 +19,6 @@ public class TripDto {
 
     private Long tripId;
     private Long vesselId;
-    private Long userId;
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
     private Long routeId;
