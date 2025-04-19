@@ -46,11 +46,20 @@ public class Trip {
     @Column(name = "status")
     private String status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "trip_client",
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "trip_client_relation",
             joinColumns = @JoinColumn(name = "trip_id"),
-            inverseJoinColumns = @JoinColumn(name = "trip_client_id")
+            inverseJoinColumns = @JoinColumn(name = "client_id")
     )
     private Set<TripClient> clients = new HashSet<>();
 
+    public void addClient(TripClient client) {
+        this.clients.add(client);
+        client.getTrips().add(this);
+    }
+
+    public void removeClient(TripClient client) {
+        this.clients.remove(client);
+        client.getTrips().remove(this);
+    }
 }

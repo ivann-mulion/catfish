@@ -24,7 +24,6 @@ public interface TripMappingHelper {
         return Trip.builder()
                 .tripId(tripDto.getTripId())
                 .vesselId(tripDto.getVesselId())
-                .userId(tripDto.getUserId())
                 .departureTime(tripDto.getDepartureTime())
                 .arrivalTime(tripDto.getArrivalTime())
                 .routeId(tripDto.getRouteId())

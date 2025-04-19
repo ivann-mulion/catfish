@@ -2,7 +2,6 @@ package org.cat.fish.tripservice.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.cat.fish.tripservice.security.principal.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +37,8 @@ public class JwtProvider {
 
         Long userId = claims.get("userId", Long.class);
         String firstName = claims.get("firstName", String.class);
-        String lastName = claims.get("userId", String.class);
+        String lastName = claims.get("lastName", String.class);
+
         List<GrantedAuthority> authorities = extractAuthorities(claims);
 
         UserPrincipal principal = new UserPrincipal(userId, firstName, lastName);

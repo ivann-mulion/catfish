@@ -1,23 +1,13 @@
 package org.cat.fish.tripservice.service;
 
 import org.cat.fish.tripservice.model.dto.TripDto;
-import reactor.core.publisher.Flux;
-
 import java.util.List;
 
 public interface TripService {
-
-    Flux<List<TripDto>> findAll();
-
-    TripDto findById(final Long id);
-
-    TripDto save(final TripDto vesselsDto);
-
-    TripDto update(final TripDto vesselsDto);
-
-    TripDto update (final Long id, final TripDto vesselsDto);
-
-
-
-    void deleteById(final Long id);
+    List<TripDto> findAll();
+    TripDto findById(Long id);
+    TripDto save(TripDto tripDto);
+    TripDto update(TripDto tripDto);
+    TripDto update(Long id, TripDto tripDto);
+    void deleteById(Long id);
 }

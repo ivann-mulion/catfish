@@ -8,66 +8,42 @@ import org.springframework.stereotype.Component;
 @Component
 public class SecurityUtils {
 
-    public static Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private static SecurityUtils instance;
 
-        System.out.println("Authentication: " + authentication);
-        if (authentication != null) {
-            System.out.println("Principal: " + authentication.getPrincipal());
-            System.out.println("Authorities: " + authentication.getAuthorities());
-            System.out.println("Authenticated: " + authentication.isAuthenticated());
-        }
-
-        if (authentication == null) {
-            throw new IllegalStateException("Authentication not found in security context");
-        }
-
-        if (!authentication.isAuthenticated()) {
-            throw new IllegalStateException("User is not authenticated");
-        }
-
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserPrincipal) {
-            System.out.println("Principal: " + ((UserPrincipal) principal).getId());
-            return ((UserPrincipal) principal).getId();
-        } else if (principal instanceof Long) {
-            return (Long) principal;
-        } else if (principal instanceof String) {
-            try {
-                return Long.parseLong((String) principal);
-            } catch (NumberFormatException e) {
-                throw new IllegalStateException("Invalid user ID format: " + principal);
-            }
-        }
-
-        throw new IllegalStateException("Unexpected principal type: " + principal.getClass().getName());
+    public SecurityUtils() {
+        instance = this;
     }
 
-
-    public static String getCurrentLastName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserPrincipal) {
-            System.out.println("Principal: " + ((UserPrincipal) principal).getLastName());
-            return ((UserPrincipal) principal).getLastName();
-        }
-
-        throw new IllegalStateException("Unexpected principal type: " + principal.getClass().getName());
+    public Long getCurrentUserId() {
+        return getCurrentUser().getId();
     }
 
-    public static String getCurrentFirstName() {
+    public String getCurrentFirstName() {
+        return getCurrentUser().getFirstName();
+    }
+
+    public String getCurrentLastName() {
+        return getCurrentUser().getLastName();
+    }
+
+    public UserPrincipal getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserPrincipal) {
-            System.out.println("Principal: " + ((UserPrincipal) principal).getFirstName());
-            return ((UserPrincipal) principal).getFirstName();
+        if (authentication != null && authentication.isAuthenticated() &&
+                authentication.getPrincipal() instanceof UserPrincipal) {
+            return (UserPrincipal) authentication.getPrincipal();
         }
+        throw new RuntimeException("User not authenticated");
+    }
 
-        throw new IllegalStateException("Unexpected principal type: " + principal.getClass().getName());
+    public static Long currentUserId() {
+        return instance.getCurrentUserId();
+    }
+
+    public static String currentFirstName() {
+        return instance.getCurrentFirstName();
+    }
+
+    public static String currentLastName() {
+        return instance.getCurrentLastName();
     }
 }
