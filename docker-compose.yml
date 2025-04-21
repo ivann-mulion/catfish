@@ -1,0 +1,147 @@
+services:
+  # 1. Сервис обнаружения (Eureka) - основа всего
+  discovery-service:
+    build: ./discovery-service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    networks:
+      - catfish-network
+    environment:
+      # Эти настройки нужно взять из discovery-service/application.properties
+      SERVER_PORT: 8761
+      # SPRING_APPLICATION_NAME: discovery-service
+
+  # 2. База данных PostgreSQL
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: catfish-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: vdv32514
+      POSTGRES_DB: userservice
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - catfish-network
+
+  # 3. API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    depends_on:
+      - discovery-service
+    ports:
+      - "8080:8080" # Основной порт приложения
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+      SERVER_PORT: 8080
+    networks:
+      - catfish-network
+
+  # 4. User Service
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    depends_on:
+      - discovery-service
+      - postgres-db
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+      SERVER_PORT: ??? # Нужно из user-service/application.properties
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/userservice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: vdv32514
+    networks:
+      - catfish-network
+
+  # 5. Vessels Service
+  vessels-service:
+    build: ./vessels-service
+    container_name: vessels-service
+    depends_on:
+      - discovery-service
+      - postgres-db
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+      SERVER_PORT: ??? # Нужно из vessels-service/application.properties
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/vesselsservice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: vdv32514
+    networks:
+      - catfish-network
+
+  # 6. Trip Service (ДОБАВЛЕНО)
+  trip-service:
+    build: ./trip-service
+    container_name: trip-service
+    depends_on:
+      - discovery-service
+      - postgres-db
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+      SERVER_PORT: ??? # Нужно из trip-service/application.properties
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/tripservice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: vdv32514
+    networks:
+      - catfish-network
+
+  # 7. Route Service (ДОБАВЛЕНО)
+  route-service:
+    build: ./route-service
+    container_name: route-service
+    depends_on:
+      - discovery-service
+      - postgres-db
+      - media-service # Если route-service зависит от media-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+      SERVER_PORT: ??? # Нужно из route-service/application.properties
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/routeservice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: vdv32514
+    networks:
+      - catfish-network
+
+  # 8. Media Service (ДОБАВЛЕНО)
+  media-service:
+    build: ./media-service
+    container_name: media-service
+    depends_on:
+      - discovery-service
+      - postgres-db
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+      SERVER_PORT: ??? # Нужно из media-service/application.properties
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/mediaservice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: vdv32514
+    networks:
+      - catfish-network
+
+  # 9. Captain Service (ДОБАВЛЕНО - обратите внимание на название папки)
+  capitan-service:
+    build: ./capitan-service
+    container_name: capitan-service
+    depends_on:
+      - discovery-service
+      - postgres-db
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka
+      SERVER_PORT: ??? # Нужно из capitan-service/application.properties
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/captainservice
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: vdv32514
+    networks:
+      - catfish-network
+
+networks:
+  catfish-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
